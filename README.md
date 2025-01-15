@@ -14,3 +14,9 @@ winget install Ollama.Ollama
 ```
 
 All issues cean be blamed on [@Reginald-Gillespie](https://github.com/Reginald-Gillespie)
+
+---
+
+General future ideas:
+
+Have all agents tunnel data through a stewbot VPN to allow all non-local GPU nodes to be accessed by the server.

@@ -2,34 +2,15 @@ const dgram = require('dgram');
 const os = require('os');
 const config = require("./config")
 
-console.log(config)
-
-// Start data - TODO: move into config.json
 const PORT = config.multicastPort;
 const interfacesToUse = config.interfaces;
-const servers = []
 
 // Start the ollama server
-const { Ollama } = require('ollama');
-
-const getInterfaceIPs = () => {
-  const interfaces = os.networkInterfaces();
-  let ipAddresses = [];
-  interfacesToUse.forEach(interfaceName => {
-    if (interfaces[interfaceName]) {
-      interfaces[interfaceName].forEach(details => {
-        if (details.family === 'IPv4' && !details.internal) {
-          ipAddresses.push(details.address);
-        }
-      });
-    }
-  });
-  return ipAddresses;
-};
-const ips = getInterfaceIPs();
-ips.forEach(ip => {
-    servers.push(new Ollama({ host: `http://${ip}:${config.ollamaPort}` }));
-    console.log(`Ollama server running on ${ip}:${config.ollamaPort}`);
+const { spawn } = require('child_process');
+const ollamaServer = spawn('./serve.sh');
+ollamaServer.on('close', (code) => {
+    console.log(`WARNING: Ollama exited with code ${code}`);
+    process.exit(code);
 });
 
 // Store agent functions that can be called through multicast
@@ -50,7 +31,7 @@ interfacesToUse.forEach((iface) => {
     }
     const { address, netmask } = ifaceInfo;
     const broadcastAddress = calculateBroadcastAddress(address, netmask);
-    console.log(`Listening for discovery requests on ${iface} (${address}), Broadcast=${broadcastAddress}`);
+    console.log(`Listening for multicast requests on ${iface} (${address}), Broadcast=${broadcastAddress}`);
     const server = dgram.createSocket({
         type: 'udp4',
         reuseAddr: true
