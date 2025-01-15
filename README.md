@@ -1,4 +1,4 @@
-A project to revive the LLM responses in [Stewbot](https://github.com/KestronProgramming/Stewbot) by running self-hosted LLM agents on multiple servesr with GPUs.
+A project to revive the LLM responses in [Stewbot](https://github.com/KestronProgramming/Stewbot) by running self-hosted LLM agents on multiple servers with GPUs.
 
 ---
 
