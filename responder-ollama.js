@@ -1,9 +1,12 @@
 const dgram = require('dgram');
 const os = require('os');
+const config = require("./config")
+
+console.log(config)
 
 // Start data - TODO: move into config.json
-const PORT = 12345;
-const interfacesToUse = ['eno1'];
+const PORT = config.multicastPort;
+const interfacesToUse = config.interfaces;
 const servers = []
 
 // Start the ollama server
@@ -25,13 +28,17 @@ const getInterfaceIPs = () => {
 };
 const ips = getInterfaceIPs();
 ips.forEach(ip => {
-    servers.push(new Ollama({ host: `http://${ip}:11434` }));
-    console.log(`Ollama server running on ${ip}:11434`);
+    servers.push(new Ollama({ host: `http://${ip}:${config.ollamaPort}` }));
+    console.log(`Ollama server running on ${ip}:${config.ollamaPort}`);
 });
 
-
-// const { default: Ollama } = require('ollama');
-// const ollama = new Ollama({ host: 'http://127.0.0.1:11434' })
+// Store agent functions that can be called through multicast
+const multicastFunctions = {
+    "ollama_discovery_request": (rinfo, iface) => {
+        console.log(`Discovery request received on ${iface} from ${rinfo.address}`);
+        return config.ollamaPort
+    }
+}
 
 // Start the multicast responder
 interfacesToUse.forEach((iface) => {
@@ -50,14 +57,12 @@ interfacesToUse.forEach((iface) => {
     });
     server.on('message', (msg, rinfo) => {
         console.log(`Message received: ${msg.toString()} from ${rinfo.address}:${rinfo.port}`);
-        if (msg.toString() === 'ollama_discovery_request') {
-            console.log(`Discovery request received on ${iface} from ${rinfo.address}`);
-            const response = Buffer.from('ollama_instance_response');
-            server.send(response, 0, response.length, rinfo.port, rinfo.address, (err) => {
-                if (err) console.error(`Response error on ${iface}:`, err);
-                else console.log(`Response sent to ${rinfo.address} on ${iface}`);
-            });
-        }
+        const response = multicastFunctions[msg.toString()]?.(rinfo, iface) || "pong";
+        const responseBuffer = Buffer.from(String(response));
+        server.send(responseBuffer, 0, responseBuffer.length, rinfo.port, rinfo.address, (err) => {
+            if (err) console.error(`Response error on ${iface}:`, err);
+            else console.log(`Response sent to ${rinfo.address} on ${iface}`);
+        });
     });
     server.on('error', (err) => {
         console.error(`Server error on ${iface}:`, err);

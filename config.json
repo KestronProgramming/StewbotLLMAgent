@@ -1,0 +1,5 @@
+{
+    "interfaces": ["eno1"],
+    "multicastPort": 12345,
+    "ollamaPort": 11434
+}
