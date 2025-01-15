@@ -1,11 +1,19 @@
 A project to revive the LLM responses in [Stewbot](https://github.com/KestronProgramming/Stewbot) by running self-hosted LLM agents on multiple servers with GPUs.
 
 ---
+<br><br><br>
 
-For linux, ollama can be istalled with:
+# Client Node Setup
+
+For linux, ollama can be installed with:
 
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
+```
+
+This adds an ollama service that, while not incompatable with this script, is unecessary. To disable it:
+```bash
+sudo systemctl disable ollama
 ```
 
 For windows, ollama can be installed with:
@@ -13,10 +21,26 @@ For windows, ollama can be installed with:
 winget install Ollama.Ollama
 ```
 
-All issues cean be blamed on [@Reginald-Gillespie](https://github.com/Reginald-Gillespie)
+---
+
+<br><br><br>
+
+# Central Computer (discord bot)
+
+[Install WireGuard](https://www.wireguard.com/install/).
+
+Run the `genkeys` script as applicable.
 
 ---
 
-General future ideas:
+<br><br><br>
+
+# TODOs
 
 Have all agents tunnel data through a stewbot VPN to allow all non-local GPU nodes to be accessed by the server.
+
+I need to add a windows alternative to serve.sh. Possibly rewrite more of it in node.js?
+
+---
+
+All issues cean be blamed on [@Reginald-Gillespie](https://github.com/Reginald-Gillespie)

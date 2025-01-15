@@ -38,23 +38,23 @@ interfacesToUse.forEach((iface) => {
     });
     server.on('message', (msg, rinfo) => {
         console.log(`Message received: ${msg.toString()} from ${rinfo.address}:${rinfo.port}`);
-        const response = multicastFunctions[msg.toString()]?.(rinfo, iface) || "pong";
-        const responseBuffer = Buffer.from(String(response));
-        server.send(responseBuffer, 0, responseBuffer.length, rinfo.port, rinfo.address, (err) => {
-            if (err) console.error(`Response error on ${iface}:`, err);
-            else console.log(`Response sent to ${rinfo.address} on ${iface}`);
-        });
+        const response = multicastFunctions[msg.toString()]?.(rinfo, iface);
+        if (response) {
+            const responseBuffer = Buffer.from(String(response));
+            server.send(responseBuffer, 0, responseBuffer.length, rinfo.port, rinfo.address, (err) => {
+                if (err) console.error(`Response error on ${iface}:`, err);
+                else console.log(`Response sent to ${rinfo.address} on ${iface}`);
+            });
+        }
     });
     server.on('error', (err) => {
         console.error(`Server error on ${iface}:`, err);
         server.close();
     });
-    // Bind to all available interfaces (0.0.0.0) instead of a specific address
+    // Bind to all available interfaces (0.0.0.0) instead of a specific address - TODO: would be preferable to just bind to the interface
     server.bind(PORT, '0.0.0.0', () => {
         console.log(`Bound to 0.0.0.0:${PORT} on ${iface}`);
         server.setBroadcast(true);
-        
-        // Add some diagnostic logging
         server.on('listening', () => {
             const address = server.address();
             console.log(`Server listening on ${address.address}:${address.port}`);

@@ -1,0 +1,9 @@
+Linux genkeys:
+wg genkey | tee privatekey | wg pubkey > publickey
+
+Windows genkeys:
+wg genkey > privatekey
+Get-Content privatekey | wg pubkey | Set-Content publickey
+
+Start wireguard with config:
+sudo wg-quick up wg0
