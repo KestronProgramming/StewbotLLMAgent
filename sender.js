@@ -1,5 +1,7 @@
 const dgram = require('dgram');
 const os = require('os');
+const { Ollama } = require('ollama');
+const fs = require("fs");
 
 const INTERFACES = ['eth0'];
 const BROADCAST_PORT = 12345;
@@ -80,8 +82,26 @@ async function multicastRequest(message, waitTimeMs) {
 
 // Usage example
 (async () => {
+
+    let ollamaInstances = [];
+
     const message = 'ollama_discovery_request';
     const waitTimeMs = 500; // 5 seconds
     const responses = await multicastRequest(message, waitTimeMs);
-    console.log('Discovered responses:', responses);
+    responses.forEach(server => {
+        ollamaInstances.push(new Ollama({ host: `http://${server.ip}:${server.data}` }))
+    })
+    console.log('Discovered servers:', ollamaInstances);
+
+    const context = [];
+    context.push({"role": "system", "content": fs.readFileSync("./system.prompt").toString()})
+    context.push({"role": "user", "content": "Hello!"})
+
+    const response = await ollamaInstances[0].chat({
+        model: 'qwen2.5:7b',
+        messages: context,
+    })
+
+    console.log(response)
+
 })();

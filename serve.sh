@@ -20,5 +20,6 @@ export OLLAMA_MAX_QUEUE=1
 export OLLAMA_MAX_LOADED_MODELS=1
 export OLLAMA_KEEP_ALIVE=10m
 export OLLAMA_DEBUG=0
+export OLLAMA_MODELS=/usr/share/ollama/.ollama/models
 
 ollama serve
