@@ -1,0 +1,28 @@
+
+## To load into systemd, copy this file to /etc/systemd/system/StewbotLLMAgent.service
+# sudo cp StewbotLLMAgent.service /etc/systemd/system/StewbotLLMAgent.service
+## Then run:
+# sudo systemctl daemon-reload
+
+## Then manage like a normal systemd task
+# sudo systemctl enable --now StewbotLLMAgent.service
+
+[Unit]
+Description=StewbotLLMAgent Startup Script
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/sh /home/reginald/StewbotLLMAgent/run.sh
+WorkingDirectory=/home/reginald/StewbotLLMAgent
+Environment=HOME=/home/reginald
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+User=reginald
+Group=reginald
+Restart=always
+
+StandardOutput=append:/home/reginald/StewbotLLMAgent/logs/stdout.log
+StandardError=append:/home/reginald/StewbotLLMAgent/logs/stderr.log
+
+[Install]
+WantedBy=default.target

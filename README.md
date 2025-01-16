@@ -25,16 +25,6 @@ winget install Ollama.Ollama
 
 <br><br><br>
 
-# Central Computer (discord bot)
-
-[Install WireGuard](https://www.wireguard.com/install/).
-
-Run the `genkeys` script as applicable.
-
----
-
-<br><br><br>
-
 # TODOs
 
 Have all agents tunnel data through a stewbot VPN to allow all non-local GPU nodes to be accessed by the server.
