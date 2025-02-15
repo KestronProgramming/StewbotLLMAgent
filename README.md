@@ -33,4 +33,4 @@ I need to add a windows alternative to serve.sh. Possibly rewrite more of it in 
 
 ---
 
-All issues cean be blamed on [@Reginald-Gillespie](https://github.com/Reginald-Gillespie)
+All issues can be blamed on [@Reginald-Gillespie](https://github.com/Reginald-Gillespie)
